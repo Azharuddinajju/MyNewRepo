@@ -1,0 +1,28 @@
+pipeline {
+    agent any
+    environment {
+    PATH = "/opt/apache-maven-3.6.3/bin:${PATH}"
+     }
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the source code from your version control system
+                // For example, using Git:
+                git 'https://github.com/architectdevops7/jenkins-pipelines.git'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                // Build the project using Maven
+                sh 'mvn clean package'
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                deploy adapters: [tomcat9(credentialsId: 'tomcat-user', path: '', url: 'http://18.234.147.0:8080/')], contextPath: null, war: '**/*.war'
+            }
+        }
+    }
+}
